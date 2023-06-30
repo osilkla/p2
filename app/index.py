@@ -11,15 +11,27 @@ class Book:
 
 
 url = 'http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html'
-response = requests.get(url)
-if response.ok:  
-    soup = BeautifulSoup(response.text,"lxml")
-    title = soup.find('h1').text
-    price = soup.find('p', class_="price_color").text
-    book = Book(title, price=price)
-    with open("books.csv","w") as outf:
-        outf.write('title,price\n')
-        outf.write(book.title+','+book.price)
-        
-    
+csvUrl = "books.csv"
+            
+def getBookFromUrl(url):
+   response = requests.get(url)
+   if response.ok:  
+       return BeautifulSoup(response.text,"lxml")
+   
+def initCSV(csvUrl, header):
+     with open(csvUrl,"w") as outf:
+        outf.write(header)
 
+def addBookToCSV(csvUrl, props):
+   with open(csvUrl,"a") as outf:
+        outf.write(props)
+        
+
+initCSV(csvUrl, 'title,price\n')
+
+soup = getBookFromUrl(url)
+title = soup.find('h1').text
+price = soup.find('p', class_="price_color").text
+book = Book(title, price=price)
+
+addBookToCSV(csvUrl,book.title+','+book.price+'\n')
