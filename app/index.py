@@ -17,7 +17,9 @@ if response.ok:
     title = soup.find('h1').text
     price = soup.find('p', class_="price_color").text
     book = Book(title, price=price)
+    with open("books.csv","w") as outf:
+        outf.write('title,price\n')
+        outf.write(book.title+','+book.price)
+        
+    
 
-    
-    
-    print(book.__dict__)
