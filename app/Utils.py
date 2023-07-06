@@ -3,6 +3,11 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def init_directory(os, directoryName):
+    if not os.path.exists(directoryName):
+        os.makedirs(directoryName)
+
+
 def init_CSV(csvUrl, header):
     with open(csvUrl, "w") as outf:
         outf.write(header)
@@ -35,7 +40,7 @@ def get_Books_Detail_Page_Url_From_Category_Url(url) -> list:
     return bookListUrl
 
 
-def get_Books_Url_From_Category(url) -> list:
+def get_books_url_from_category(url) -> list:
     response = requests.get(url)
     bookListUrl = []
     if response.ok:
@@ -53,7 +58,7 @@ def get_Books_Url_From_Category(url) -> list:
         return bookListUrl
 
 
-def get_Book_Details_From_Book_Url(url):
+def get_book_details_from_book_url(url):
     response = requests.get(url)
     if response.ok:
         return BeautifulSoup(response.text, "lxml")
@@ -70,5 +75,8 @@ def get_categories_list():
             categories_url_list[
                 category.text.replace("\n", "").replace(" ", "")
             ] = SITE_URL + category.get("href")
+        return categories_url_list
 
-        print(categories_url_list)
+
+def sanitize_string(str):
+    return f'"{str}"'
