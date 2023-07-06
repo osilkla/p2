@@ -1,5 +1,6 @@
 from BookClass import Book
 from Utils import (
+    get_categories_list,
     init_CSV,
     add_item_to_CSV,
     get_Books_Url_From_Category,
@@ -13,7 +14,7 @@ paginatedCategoryUrl = SITE_URL + "catalogue/category/books/mystery_3/index.html
 
 csvUrl = "travelBooks.csv"
 
-
+get_categories_list()
 travelBooksUrl = get_Books_Url_From_Category(paginatedCategoryUrl)
 
 init_CSV(csvUrl, "title,price,url\n")

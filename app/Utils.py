@@ -57,3 +57,18 @@ def get_Book_Details_From_Book_Url(url):
     response = requests.get(url)
     if response.ok:
         return BeautifulSoup(response.text, "lxml")
+
+
+def get_categories_list():
+    response = requests.get(SITE_URL)
+    categories_url_list = {}
+    if response.ok:
+        soup = BeautifulSoup(response.text, "lxml")
+        # we have to go down to the next ul to avoid generic <a "Books"/> because it's not a category
+        categories = soup.find("ul", {"class": "nav-list"}).li.ul.find_all("a")
+        for category in categories:
+            categories_url_list[
+                category.text.replace("\n", "").replace(" ", "")
+            ] = SITE_URL + category.get("href")
+
+        print(categories_url_list)
