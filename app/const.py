@@ -1,1 +1,1 @@
-SITE_URL="http://books.toscrape.com/"
+SITE_URL = "http://books.toscrape.com/"
