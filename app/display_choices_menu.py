@@ -1,9 +1,5 @@
 import inquirer
-from book_scraper import save_books_in_csv
-from const import (
-    USER_CHOICES,
-    USER_YES_NO_CHOICES,
-)
+from const import USER_CHOICES, USER_YES_NO_CHOICES
 
 
 def display_extract_all_or_category_menu_to_user() -> str:
@@ -17,7 +13,7 @@ def display_extract_all_or_category_menu_to_user() -> str:
         return user_choice
 
 
-def display_extract_one_category_menu_to_user(categories: dict) -> str:
+def display_extract_one_category_menu_to_user(categories: dict):
     category_question = [
         inquirer.List(
             "category",
@@ -27,8 +23,10 @@ def display_extract_one_category_menu_to_user(categories: dict) -> str:
     ]
     category_name = inquirer.prompt(category_question)["category"]
     user_category_url = categories[category_name]
-    save_books_in_csv(user_category_url, category_name)
+    return user_category_url, category_name
 
+
+def display_continue_or_quit_menu() -> str:
     continue_or_quit_question = [
         inquirer.List(
             "continue",
