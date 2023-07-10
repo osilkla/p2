@@ -1,7 +1,10 @@
-from utils import sanitize_string, convert_abc_rating_score_to_123
-from const import SITE_URL
+import os
+from services.utils import sanitize_string, convert_abc_rating_score_to_123
+from const import SITE_URL, CSV_DIRECTORY
 import requests
 from bs4 import BeautifulSoup
+
+from services.utils import add_header_to_CSV, add_row_to_CSV
 
 
 def define_number_of_pages_to_scrap(soup) -> int:
@@ -83,3 +86,12 @@ def get_categories_list() -> dict:
         return categories_url_list
     else:
         raise Exception("Categories list is not available")
+
+
+def save_books_in_csv(category_url: str, category_name: str):
+    csv_url = os.path.join(CSV_DIRECTORY, f"{ category_name}.csv")
+    category_books_Url = get_books_url_from_category(category_url)
+    add_header_to_CSV(csv_url)
+    for bookUrl in category_books_Url:
+        book = get_book_details_from_book_url(bookUrl)
+        add_row_to_CSV(csv_url, book)
