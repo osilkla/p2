@@ -1,34 +1,7 @@
-from BookClass import Book
-from const import CSV_DELIMITER, SITE_URL
+from utils import sanitize_string, convert_abc_rating_score_to_123
+from const import SITE_URL
 import requests
 from bs4 import BeautifulSoup
-
-
-def init_directory(os, directoryName):
-    if not os.path.exists(directoryName):
-        os.makedirs(directoryName)
-
-
-def add_header_to_CSV(csvUrl, header):
-    with open(csvUrl, "w") as outf:
-        outf.write(header)
-
-
-def add_row_to_CSV(csvUrl, book):
-    with open(csvUrl, "a") as outf:
-        new_csv_row = (
-            book.title
-            + CSV_DELIMITER
-            + book.price
-            + CSV_DELIMITER
-            + book.desc
-            + CSV_DELIMITER
-            + book.rating
-            + CSV_DELIMITER
-            + book.url
-            + "\n"
-        )
-        outf.write(new_csv_row)
 
 
 def define_number_of_pages_to_scrap(soup) -> int:
@@ -39,7 +12,7 @@ def define_number_of_pages_to_scrap(soup) -> int:
     return number_of_page_to_scrap
 
 
-def get_books_detail_page_url_from_category_url(url) -> list:
+def get_books_detail_page_url_from_category_url(url: str) -> list:
     response = requests.get(url)
     bookListUrl = []
     if response.ok:
@@ -54,7 +27,7 @@ def get_books_detail_page_url_from_category_url(url) -> list:
         raise Exception("Category Page is not available")
 
 
-def get_books_url_from_category(url) -> list:
+def get_books_url_from_category(url: str) -> list:
     response = requests.get(url)
     bookListUrl = []
     if response.ok:
@@ -74,22 +47,24 @@ def get_books_url_from_category(url) -> list:
         raise Exception("Category Page is not available")
 
 
-def get_book_details_from_book_url(url) -> Book:
+def get_book_details_from_book_url(url: str) -> dict:
     response = requests.get(url)
     if response.ok:
+        book = {"title": "", "price": "", "desc": "", "rating": "", "url": ""}
         soup = BeautifulSoup(response.text, "lxml")
-        title = sanitize_string(soup.find("h1").text)
-        price = sanitize_string(soup.find("p", class_="price_color").text)
-        desc = "Null"
+        book["title"] = sanitize_string(soup.find("h1").text)
+        book["price"] = sanitize_string(soup.find("p", class_="price_color").text)
+        book["desc"] = "Null"
         if soup.find(string="Product Description"):
-            desc = sanitize_string(
+            book["desc"] = sanitize_string(
                 soup.find(string="Product Description").find_next("p").contents[0]
             )
         # more_info = soup.table TODO
-        rating_score = convert_abc_rating_score_to_123(
+        book["rating"] = convert_abc_rating_score_to_123(
             soup.find("p", class_="star-rating").get("class")[1]
         )
-        return Book(title, url, price=price, desc=desc, rating=rating_score)
+        print(book)
+        return book
     else:
         raise Exception("Book Page is not available")
 
@@ -108,19 +83,3 @@ def get_categories_list() -> dict:
         return categories_url_list
     else:
         raise Exception("Categories list is not available")
-
-
-def sanitize_string(str) -> str:
-    return f'"{str}"'
-
-
-def convert_abc_rating_score_to_123(string_rating_score) -> str:
-    rating_range = {
-        "One": "1",
-        "Two": "2",
-        "Three": "3",
-        "Four": "4",
-        "Five": "5",
-    }
-
-    return rating_range.get(string_rating_score, "Null")
