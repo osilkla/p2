@@ -1,5 +1,9 @@
 import inquirer
-from const import USER_CHOICES, USER_YES_NO_CHOICES
+
+USER_CHOICE_SCRAP_ALL = "ALL"
+USER_CHOICE_SCRAP_CAT = "CATEGORY"
+USER_CHOICES = [USER_CHOICE_SCRAP_ALL, USER_CHOICE_SCRAP_CAT]
+USER_YES_NO_CHOICES = ["YES", "NO"]
 
 
 def display_extract_all_or_category_menu_to_user() -> str:

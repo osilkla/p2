@@ -3,6 +3,9 @@ from display_choices_menu import (
     display_extract_all_or_category_menu_to_user,
     display_extract_one_category_menu_to_user,
     display_continue_or_quit_menu,
+    USER_CHOICE_SCRAP_ALL,
+    USER_CHOICE_SCRAP_CAT,
+    USER_YES_NO_CHOICES,
 )
 from services.book_scraper import (
     get_categories_list,
@@ -11,9 +14,6 @@ from services.book_scraper import (
 from services.utils import init_directory
 from const import (
     CSV_DIRECTORY,
-    USER_CHOICE_SCRAP_ALL,
-    USER_CHOICE_SCRAP_CAT,
-    USER_YES_NO_CHOICES,
 )
 
 instruction_is_set = False

@@ -1,5 +1,13 @@
-from const import CSV_HEADER, RATING_RANGE
+from const import CSV_HEADER
 import csv
+
+RATING_RANGE = {
+    "One": "1",
+    "Two": "2",
+    "Three": "3",
+    "Four": "4",
+    "Five": "5",
+}
 
 
 def init_directory(os, directoryName: str):
