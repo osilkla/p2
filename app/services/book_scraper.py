@@ -88,7 +88,7 @@ def get_categories_list() -> dict:
         raise Exception("Categories list is not available")
 
 
-def save_books_in_csv(category_url: str, category_name: str):
+def save_books_in_csv(category_url: str, category_name: str) -> None:
     csv_url = os.path.join(CSV_DIRECTORY, f"{ category_name}.csv")
     category_books_Url = get_books_url_from_category(category_url)
     add_header_to_CSV(csv_url)

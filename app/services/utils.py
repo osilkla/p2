@@ -10,12 +10,12 @@ RATING_RANGE = {
 }
 
 
-def init_directory(os, directoryName: str):
+def init_directory(os, directoryName: str) -> None:
     if not os.path.exists(directoryName):
         os.makedirs(directoryName)
 
 
-def add_header_to_CSV(csvUrl: str):
+def add_header_to_CSV(csvUrl: str) -> None:
     with open(csvUrl, "w") as csv_file:
         writer = csv.DictWriter(
             csv_file, fieldnames=CSV_HEADER, delimiter=CSV_DELIMITER
@@ -23,7 +23,7 @@ def add_header_to_CSV(csvUrl: str):
         writer.writeheader()
 
 
-def add_row_to_CSV(csvUrl: str, book: dict):
+def add_row_to_CSV(csvUrl: str, book: dict) -> None:
     with open(csvUrl, "a") as csv_file:
         writer = csv.DictWriter(
             csv_file, fieldnames=CSV_HEADER, delimiter=CSV_DELIMITER
