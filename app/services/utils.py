@@ -1,4 +1,4 @@
-from const import CSV_HEADER
+from const import CSV_HEADER, CSV_DELIMITER
 import csv
 
 RATING_RANGE = {
@@ -17,13 +17,17 @@ def init_directory(os, directoryName: str):
 
 def add_header_to_CSV(csvUrl: str):
     with open(csvUrl, "w") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=CSV_HEADER)
+        writer = csv.DictWriter(
+            csv_file, fieldnames=CSV_HEADER, delimiter=CSV_DELIMITER
+        )
         writer.writeheader()
 
 
 def add_row_to_CSV(csvUrl: str, book: dict):
     with open(csvUrl, "a") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=CSV_HEADER)
+        writer = csv.DictWriter(
+            csv_file, fieldnames=CSV_HEADER, delimiter=CSV_DELIMITER
+        )
         writer.writerow(book)
 
 

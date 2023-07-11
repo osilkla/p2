@@ -1,11 +1,11 @@
 import os
-from display_choices_menu import (
+from services.display_choices_menu import (
     display_extract_all_or_category_menu_to_user,
     display_extract_one_category_menu_to_user,
     display_continue_or_quit_menu,
     USER_CHOICE_SCRAP_ALL,
     USER_CHOICE_SCRAP_CAT,
-    USER_YES_NO_CHOICES,
+    USER_YES_CHOICE,
 )
 from services.book_scraper import (
     get_categories_list,
@@ -41,7 +41,7 @@ elif user_choice == USER_CHOICE_SCRAP_CAT:
         save_books_in_csv(user_category_url, category_name)
         user_choice = display_continue_or_quit_menu()
 
-        user_want_to_scrap = bool(user_choice == USER_YES_NO_CHOICES[0])
+        user_want_to_scrap = bool(user_choice == USER_YES_CHOICE)
 
         if not user_want_to_scrap:
             break
