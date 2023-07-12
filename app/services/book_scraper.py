@@ -1,12 +1,11 @@
 import os
 import requests
-from const import SITE_URL, CSV_DIRECTORY, IMG_DIRECTORY
 from bs4 import BeautifulSoup
+from const import SITE_URL, CSV_DIRECTORY
 from services.utils import (
     get_local_img_src,
     add_header_to_CSV,
     add_row_to_CSV,
-    init_directory,
     sanitize_string,
     convert_abc_rating_score_to_123,
 )
