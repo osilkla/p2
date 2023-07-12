@@ -1,4 +1,6 @@
-from const import CSV_HEADER, CSV_DELIMITER
+import os
+import re
+from const import CSV_HEADER, CSV_DELIMITER, IMG_DIRECTORY
 import csv
 
 RATING_RANGE = {
@@ -37,3 +39,10 @@ def sanitize_string(str: str) -> str:
 
 def convert_abc_rating_score_to_123(string_rating_score: str) -> str:
     return RATING_RANGE.get(string_rating_score, "Null")
+
+
+def get_local_img_src(book_title: str, category_name: str):
+    img_directory_with_category_name = os.path.join(IMG_DIRECTORY, category_name)
+    init_directory(os, img_directory_with_category_name)
+    image_title = re.sub("[^a-zA-Z0-9 \n]", "", book_title)
+    return os.path.join(img_directory_with_category_name, f"{image_title}.jpg")

@@ -1,10 +1,15 @@
 import os
-from services.utils import sanitize_string, convert_abc_rating_score_to_123
-from const import SITE_URL, CSV_DIRECTORY
 import requests
+from const import SITE_URL, CSV_DIRECTORY, IMG_DIRECTORY
 from bs4 import BeautifulSoup
-
-from services.utils import add_header_to_CSV, add_row_to_CSV
+from services.utils import (
+    get_local_img_src,
+    add_header_to_CSV,
+    add_row_to_CSV,
+    init_directory,
+    sanitize_string,
+    convert_abc_rating_score_to_123,
+)
 
 
 def define_number_of_pages_to_scrap(soup) -> int:
@@ -17,22 +22,21 @@ def define_number_of_pages_to_scrap(soup) -> int:
 
 def get_books_detail_page_url_from_category_url(url: str) -> list:
     response = requests.get(url)
-    bookListUrl = []
+    book_list_url = []
     if response.ok:
         soup = BeautifulSoup(response.text, "lxml")
         for book in soup.find_all("article"):
             bookUrl = book.h3.a.get("href").replace(
                 "../../../", SITE_URL + "catalogue/"
             )
-            bookListUrl.append(bookUrl)
-        return bookListUrl
-    else:
-        raise Exception("Category Page is not available")
+            book_list_url.append(bookUrl)
+        return book_list_url
+    raise Exception("Category Page is not available")
 
 
 def get_books_url_from_category(url: str) -> list:
     response = requests.get(url)
-    bookListUrl = []
+    book_list_url = []
     if response.ok:
         soup = BeautifulSoup(response.text, "lxml")
         number_of_pages_to_scrap = define_number_of_pages_to_scrap(soup)
@@ -43,20 +47,29 @@ def get_books_url_from_category(url: str) -> list:
                 category_url = url.replace(
                     "index.html", "page-" + str(current_page_to_scrap) + ".html"
                 )
-            bookListUrl += get_books_detail_page_url_from_category_url(category_url)
+            book_list_url += get_books_detail_page_url_from_category_url(category_url)
             current_page_to_scrap += 1
-        return bookListUrl
-    else:
-        raise Exception("Category Page is not available")
+        return book_list_url
+    raise Exception("Category Page is not available")
 
 
-def get_book_details_from_book_url(url: str) -> dict:
+def get_book_details_from_book_url(url: str, category_name: str) -> dict:
     response = requests.get(url)
     if response.ok:
-        book = {"title": "", "price": "", "desc": "", "rating": "", "url": ""}
+        book = {
+            "title": "",
+            "price": "",
+            "desc": "",
+            "rating": "",
+            "url": "",
+            "online_src_img": "",
+            "local_src_img": "",
+            "category": "",
+        }
         soup = BeautifulSoup(response.text, "lxml")
         book["title"] = sanitize_string(soup.find("h1").text)
         book["price"] = sanitize_string(soup.find("p", class_="price_color").text)
+        book["url"] = url
         book["desc"] = "Null"
         if soup.find(string="Product Description"):
             book["desc"] = sanitize_string(
@@ -66,10 +79,14 @@ def get_book_details_from_book_url(url: str) -> dict:
         book["rating"] = convert_abc_rating_score_to_123(
             soup.find("p", class_="star-rating").get("class")[1]
         )
+        book["category"] = category_name
+        book["online_src_img"] = (
+            soup.select("img")[0].get("src").replace("../../", SITE_URL)
+        )
+        book["local_src_img"] = get_local_img_src(book["title"], book["category"])
         print(book)
         return book
-    else:
-        raise Exception("Book Page is not available")
+    raise Exception("Book Page is not available")
 
 
 def get_categories_list() -> dict:
@@ -84,14 +101,21 @@ def get_categories_list() -> dict:
                 category.text.replace("\n", "").replace(" ", "")
             ] = SITE_URL + category.get("href")
         return categories_url_list
-    else:
-        raise Exception("Categories list is not available")
+    raise Exception("Categories list is not available")
 
 
 def save_books_in_csv(category_url: str, category_name: str) -> None:
     csv_url = os.path.join(CSV_DIRECTORY, f"{ category_name}.csv")
-    category_books_Url = get_books_url_from_category(category_url)
+    category_books_url = get_books_url_from_category(category_url)
     add_header_to_CSV(csv_url)
-    for bookUrl in category_books_Url:
-        book = get_book_details_from_book_url(bookUrl)
+    for book_url in category_books_url:
+        book = get_book_details_from_book_url(book_url, category_name)
+        download_image(book["online_src_img"], book["title"], book["category"])
         add_row_to_CSV(csv_url, book)
+
+
+def download_image(image_url: str, book_title: str, book_category: str) -> None:
+    image_destination_path = get_local_img_src(book_title, book_category)
+    with open(image_destination_path, "wb") as file:
+        response = requests.get(image_url)
+        file.write(response.content)
