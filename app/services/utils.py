@@ -59,3 +59,18 @@ def get_local_img_src(book_title: str, category_name: str):
     init_directory(os, img_directory_with_category_name)
     image_title = format_string_to_acceptable_file_name(book_title)
     return os.path.join(img_directory_with_category_name, f"{image_title}.jpg")
+
+
+def remove_items_from_dict(dictionary, start_element):
+    keys_to_remove = []
+    is_key_should_be_remove = True
+
+    for key in dictionary:
+        if key == start_element:
+            is_key_should_be_remove = False
+        elif is_key_should_be_remove:
+            keys_to_remove.append(key)
+
+    for key in keys_to_remove:
+        del dictionary[key]
+    return dictionary

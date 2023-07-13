@@ -6,12 +6,13 @@ from services.display_choices_menu import (
     USER_CHOICE_SCRAP_ALL,
     USER_CHOICE_SCRAP_CAT,
     USER_YES_CHOICE,
+    USER_CHOICE_SCRAP_ALL_FROM_SELECTED_CAT,
 )
 from services.book_scraper import (
     get_categories_list,
     save_books_in_csv,
 )
-from services.utils import init_directory
+from services.utils import init_directory, remove_items_from_dict
 from const import (
     CSV_DIRECTORY,
 )
@@ -45,3 +46,12 @@ elif user_choice == USER_CHOICE_SCRAP_CAT:
 
         if not user_want_to_scrap:
             break
+
+# In case off partial failed "SCRAP_ALL" the user might want to complete the unscrapped category
+elif user_choice == USER_CHOICE_SCRAP_ALL_FROM_SELECTED_CAT:
+    user_category_url, category_name = display_extract_one_category_menu_to_user(
+        categories
+    )
+    list_to_scrap = remove_items_from_dict(categories, category_name)
+    for category, url in list_to_scrap.items():
+        save_books_in_csv(url, category)

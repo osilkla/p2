@@ -2,7 +2,12 @@ import inquirer
 
 USER_CHOICE_SCRAP_ALL = "ALL"
 USER_CHOICE_SCRAP_CAT = "CATEGORY"
-USER_SCRAP_TYPE_CHOICES = [USER_CHOICE_SCRAP_ALL, USER_CHOICE_SCRAP_CAT]
+USER_CHOICE_SCRAP_ALL_FROM_SELECTED_CAT = "FROM"
+USER_SCRAP_TYPE_CHOICES = [
+    USER_CHOICE_SCRAP_ALL,
+    USER_CHOICE_SCRAP_CAT,
+    USER_CHOICE_SCRAP_ALL_FROM_SELECTED_CAT,
+]
 USER_YES_CHOICE = "YES"
 USER_NO_CHOICE = "NO"
 USER_YES_NO_CHOICES = [USER_YES_CHOICE, USER_NO_CHOICE]
@@ -11,7 +16,10 @@ USER_YES_NO_CHOICES = [USER_YES_CHOICE, USER_NO_CHOICE]
 def display_extract_all_or_category_menu_to_user() -> str:
     print("What do you want to do ?")
     user_choice = input(
-        "Type 'All' if you want to srap all books, Type 'Category' if you want to scrap only one Category: "
+        """Type: 
+        - 'All' if you want to srap all books,
+        - 'Category' if you want to scrap Category one at a time,
+        - 'From' if you want to scrapp all Category from selected Category: """
     ).upper()
     if user_choice not in USER_SCRAP_TYPE_CHOICES:
         print("This input is not a valid choice: ", user_choice)
