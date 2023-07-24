@@ -48,3 +48,12 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Project specific
+csv/
+env/
+img/
+.DS_Store
+.bash_profile.save
+app/.DS_Store
+app/.vscode/
