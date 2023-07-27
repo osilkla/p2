@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 from bs4 import BeautifulSoup
 from const import SITE_URL, CSV_DIRECTORY
@@ -57,7 +58,10 @@ def get_book_details_from_book_url(url: str, category_name: str) -> dict:
     if response.ok:
         book = {
             "title": "",
-            "price": "",
+            "price_with_tax": "",
+            "price_without_tax": "",
+            "universal_product_code": "",
+            "number_available": "",
             "desc": "",
             "rating": "",
             "url": "",
@@ -66,15 +70,18 @@ def get_book_details_from_book_url(url: str, category_name: str) -> dict:
             "category": "",
         }
         soup = BeautifulSoup(response.text, "lxml")
+        book_info = soup.find_all("td")
         book["title"] = sanitize_string(soup.find("h1").text)
-        book["price"] = sanitize_string(soup.find("p", class_="price_color").text)
+        book["universal_product_code"] = sanitize_string(book_info[0].text)
+        book["price_without_tax"] = sanitize_string(book_info[2].text)
+        book["price_with_tax"] = sanitize_string(book_info[3].text)
+        book["number_available"] = sanitize_string(re.sub(r"\D", "", book_info[5].text))
         book["url"] = url
         book["desc"] = "Null"
         if soup.find(string="Product Description"):
             book["desc"] = sanitize_string(
                 soup.find(string="Product Description").find_next("p").contents[0]
             )
-        # more_info = soup.table TODO
         book["rating"] = convert_abc_rating_score_to_123(
             soup.find("p", class_="star-rating").get("class")[1]
         )
@@ -109,7 +116,7 @@ def save_books_in_csv(category_url: str, category_name: str) -> None:
     add_header_to_CSV(csv_url)
     for book_url in category_books_url:
         book = get_book_details_from_book_url(book_url, category_name)
-        download_image(book["online_src_img"], book["title"], book["category"])
+        # download_image(book["online_src_img"], book["title"], book["category"])
         add_row_to_CSV(csv_url, book)
 
 

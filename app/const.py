@@ -4,7 +4,10 @@ IMG_DIRECTORY = "img"
 CSV_DELIMITER = ","
 CSV_HEADER = [
     "title",
-    "price",
+    "price_with_tax",
+    "price_without_tax",
+    "universal_product_code",
+    "number_available",
     "desc",
     "rating",
     "url",
