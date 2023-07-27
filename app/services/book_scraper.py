@@ -116,7 +116,7 @@ def save_books_in_csv(category_url: str, category_name: str) -> None:
     add_header_to_CSV(csv_url)
     for book_url in category_books_url:
         book = get_book_details_from_book_url(book_url, category_name)
-        # download_image(book["online_src_img"], book["title"], book["category"])
+        download_image(book["online_src_img"], book["title"], book["category"])
         add_row_to_CSV(csv_url, book)
 
 
