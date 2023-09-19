@@ -24,7 +24,7 @@ def get_books_detail_page_url_from_category_url(url: str) -> list:
     response = requests.get(url)
     book_list_url = []
     if response.ok:
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(response.content, "lxml")
         for book in soup.find_all("article"):
             bookUrl = book.h3.a.get("href").replace(
                 "../../../", SITE_URL + "catalogue/"
@@ -38,7 +38,7 @@ def get_books_url_from_category(url: str) -> list:
     response = requests.get(url)
     book_list_url = []
     if response.ok:
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(response.content, "lxml")
         number_of_pages_to_scrap = define_number_of_pages_to_scrap(soup)
         current_page_to_scrap = 1
         category_url = url
@@ -69,13 +69,13 @@ def get_book_details_from_book_url(url: str, category_name: str) -> dict:
             "local_src_img": "",
             "category": "",
         }
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(response.content, "lxml")
         book_info = soup.find_all("td")
         book["title"] = sanitize_string(soup.find("h1").text)
         book["universal_product_code"] = sanitize_string(book_info[0].text)
         book["price_without_tax"] = sanitize_string(book_info[2].text)
         book["price_with_tax"] = sanitize_string(book_info[3].text)
-        book["number_available"] = sanitize_string(re.sub(r"\D", "", book_info[5].text))
+        book["number_available"] = re.sub(r"\D", "", book_info[5].text)
         book["url"] = url
         book["desc"] = "Null"
         if soup.find(string="Product Description"):
@@ -99,7 +99,7 @@ def get_categories_list() -> dict:
     response = requests.get(SITE_URL)
     categories_url_list = {}
     if response.ok:
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(response.content, "lxml")
         # we have to go down to the next ul to avoid generic <a "Books"/> because it's not a category
         categories = soup.find("ul", {"class": "nav-list"}).li.ul.find_all("a")
         for category in categories:

@@ -22,7 +22,7 @@ def init_directory(os, directoryName: str) -> None:
 
 
 def add_header_to_CSV(csvUrl: str) -> None:
-    with open(csvUrl, "w") as csv_file:
+    with open(csvUrl, "w",encoding="utf-8-sig") as csv_file:
         writer = csv.DictWriter(
             csv_file, fieldnames=CSV_HEADER, delimiter=CSV_DELIMITER
         )
@@ -30,7 +30,7 @@ def add_header_to_CSV(csvUrl: str) -> None:
 
 
 def add_row_to_CSV(csvUrl: str, book: dict) -> None:
-    with open(csvUrl, "a") as csv_file:
+    with open(csvUrl, "a",encoding="utf-8-sig") as csv_file:
         writer = csv.DictWriter(
             csv_file, fieldnames=CSV_HEADER, delimiter=CSV_DELIMITER
         )
